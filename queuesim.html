@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+<head>
+	<title>HTML5 Call Queue Simulator</title>
+	<meta name="author" content="T. M. Vilece">
+	<meta name="viewport" content="width=device-width">
+</head>
+<body>
+  <h1>HTML5 Queue Simulator</h1>
+  <h2>Add new...</h2>
+  <h2>Agent info</h2>
+  <h2>Queue info</h2>
+
+  <script>
+    var allCollections = {
+      queues: {},
+      agents: {},
+      calls: [],
+      intxns: []
+    }
+
+    var dayLength = 28800;// seconds
+    var currentSecond = 0;
+
+    function now(){
+      return currentSecond;
+    }
+    function step(n){// steps forward N seconds (must be a counting number)
+      if(n <= 0){ return now(); }
+      currentSecond = currentSecond + n;
+    }
+
+    function randomUint32(){// 32 random bits
+      return window.crypto.getRandomValues(new Uint32Array(1))[0];
+    }
+
+    function tempName(hexMagni){// reasonable for anything below 6 or so
+
+    }
+
+    function boxMuller(){// mean: 0, stdev: 1
+      let u = 0, v = 0;
+      while(u === 0){ u = Math.random(); };
+      while(v === 0){ v = Math.random(); };
+      let r = Math.sqrt( -2.0 * Math.log(u));
+      let theta = 2.0 * Math.PI * v;
+      let z0 = r * Math.sin(theta);
+      let z1 = r * Math.cos(theta);
+      return {z0: z0, z1: z1};
+    }
+
+    function NormalGenerator(mu, sigma){
+      this.mu = mu;
+      this.sigma = sigma;
+      this.remainder = [];
+      this.next = function(){
+        if(this.remainder.length === 0){
+          let bmu = boxMuller();
+          this.remainder.push(...[bmu.z0,bmu.z1]);
+        }
+        let ncore = this.remainder.pop();
+        return (ncore * this.sigma) + this.mu;
+      };
+    }
+
+    function testBoxmu(){
+      let x = new NormalGenerator(0, 1);
+      return Array(100).fill(Symbol()).map(i => x.next());
+    }
+
+    function testBMUdist(){
+      let x = new NormalGenerator(0,1);
+      return Array(200).fill(Symbol()).map(i => {return {0: x.next(), 1: x.next()}});	
+    }	
+
+    function arrangeBdist(bdist){
+      return bdist.map(
+        coord => `(${coord[0].toString()}, ${coord[1].toString()})`
+      ).join(", ");
+    }
+</script>
+</body>
+</html>
