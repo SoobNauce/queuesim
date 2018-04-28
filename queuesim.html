@@ -120,22 +120,18 @@
     
     function intToHexName(n, digits){// converts N to a nice hex tag
       // padding to [digits] if necessary
-      let s = n.toString(16).toUpperCase();
-      while(s.length < digits){
-        s = "0" + s;
-      }
-      return s;
+      return n.toString(16).toUpperCase().padStart(digits, "0");
     }
 
     function tempName(hexMagni){// reasonable for everything
       let arraySize = Math.ceil(hexMagni/16);
       let randVals = new Uint32Array(arraySize).fill(0);
       window.crypto.getRandomValues(randVals);
-      let digits = 0;
-      while(digits <= hexMagni){
-
-      }
+      let result = [];
+      randVals.map(i => result.push(i.toString(16).toUpperCase().padStart(8, "0"))).join("");
+      return result.join("");
     }
+    console.log(tempName(50));
 
     function boxMuller(){// mean: 0, stdev: 1
       let u = 0, v = 0;
